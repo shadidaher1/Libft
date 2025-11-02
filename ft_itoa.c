@@ -1,33 +1,46 @@
 #include "libft.h"
+// #include <stdio.h>
+
+size_t count_digits(int n)
+{
+    size_t i;
+
+    i = 1;
+    while (n / 10)
+    {
+        i++;
+        n /= 10;
+    }
+    return (i);
+}
 
 char *ft_itoa(int n)
 {
-    char *res;
-    long num;
-    int len;
+    size_t i;
+    long int numb;
+    char *string;
 
-    num = n;
-    len = (n <= 0) ? 1 : 0;
-    while (n)
+    numb = n;
+    i = count_digits(n);
+    if (numb < 0)
     {
-        len++;
-        n /= 10;
+        i++;
+        numb *= -1;
     }
-    res = malloc(len + 1);
-    if (!res)
-        return (NULL);
-    res[len] = '\0';
-    if (num == 0)
-        res[0] = '0';
-    if (num < 0)
+    string = malloc(sizeof(char) * (i + 1));
+    string[i] = '\0';
+    while (i--)
     {
-        res[0] = '-';
-        num = -num;
+        string[i] = numb % 10 + '0';
+        numb /= 10;
     }
-    while (num > 0)
-    {
-        res[--len] = (num % 10) + '0';
-        num /= 10;
-    }
-    return (res);
+    if (n < 0)
+        string[0] = '-';
+    return (string);
 }
+// int main()
+// {
+//     int n = -1231212;
+//     char *a = ft_itoa(n);
+//     printf("%s\n", a);
+// }

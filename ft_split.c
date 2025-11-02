@@ -1,92 +1,74 @@
+#include <stdio.h>
 #include "libft.h"
 
-static int  word_count(const char *str, char c)
+char *ft_strchr(const char *s, int c);
+char *ft_substr(char const *s, unsigned int start, size_t len);
+char *ft_strrchr(const char *s, int c);
+int count_words(char const *s, char c)
 {
-    int count;
-    int trigger;
-
-    count = 0;
-    trigger = 0;
-    while (*str)
-    {
-        if (*str != c && trigger == 0)
-        {
-            trigger = 1;
-            count++;
-        }
-        else if (*str == c)
-            trigger = 0;
-        str++;
-    }
-    return (count);
-}
-
-static char *fill_word(const char *str, int start, int end)
-{
-    char *word;
     int i;
+    int j;
 
     i = 0;
-    word = malloc((end - start + 1) * sizeof(char));
-    if (!word)
+    j = 0;
+    while (s[i])
+    {
+        if (s[i] != c && (i == 0 || s[i - 1] == c))
+            j++;
+        i++;
+    }
+    return (j);
+}
+char **free_array(char **arr, size_t j)
+{
+    if (!arr)
         return (NULL);
-    while (start < end)
+    while (j > 0)
     {
-        word[i] = str[start];
-        i++;
-        start++;
+        j--;
+        free(arr[j]);
     }
-    word[i] = 0;
-    return (word);
-}
-
-static void *ft_free(char **strs, int count)
-{
-    int i;
-
-    i = 0;
-    while (i < count)
-    {
-        free(strs[i]);
-        i++;
-    }
-    free(strs);
+    free(arr);
     return (NULL);
 }
-
-static void ft_initiate_vars(size_t *i, int *j, int *s_word)
+char **ft_split(char const *s, char c)
 {
-    *i = 0;
-    *j = 0;
-    *s_word = -1;
-}
-
-char **ft_split(const char *s, char c)
-{
-    char **res;
-    size_t i;
-    int j;
-    int s_word;
-
-    ft_initiate_vars(&i, &j, &s_word);
     if (!s)
         return (NULL);
-    res = ft_calloc((word_count(s, c) + 1), sizeof(char *));
-    if (!res)
+    char **array;
+    int i;
+    int j;
+    int count;
+    int start;
+
+    count = count_words(s, c);
+    i = 0;
+    array = malloc((count + 1) * sizeof(char *));
+    if (!array)
         return (NULL);
-    while (i <= ft_strlen(s))
+    while (s[i] && j < count)
     {
-        if (s[i] != c && s_word < 0)
-            s_word = i;
-        else if ((s[i] == c || i == ft_strlen(s)) && s_word >= 0)
-        {
-            res[j] = fill_word(s, s_word, i);
-            if (!(res[j]))
-                return (ft_free(res, j));
-            s_word = -1;
-            j++;
-        }
-        i++;
+        while (s[i] && s[i] == c)
+            i++;
+        start = i;
+        while (s[i] && s[i] != c)
+            i++;
+        array[j] = ft_substr(s, start, i - start);
+        if (!array[j])
+            return (free_array(array, j));
+        j++;
     }
-    return (res);
+    array[count] = NULL;
+    return (array);
+}
+int main()
+{
+    // char a[] = "heeelelo";
+    // char c = 'l';
+    // char **arr = ft_split(a, c);
+    // printf("%s", arr[1]);
+    char **arr = ft_split("  hello my name is shadi  ", ' ');
+    printf("%s", arr[1]);
+    // free(arr);
+    return 0;
 }
